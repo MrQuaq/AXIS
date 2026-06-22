@@ -1,44 +1,34 @@
 #include "Globals.h"
-
 #include <LiquidCrystal_I2C.h>
-#include <Wire.h>
-
 
 //--------GLOBAL VARIABLES------------
 extern double dt;
 extern unsigned long last_time;
-
 extern float angle;
 
+// Ensure these are defined globally in Globals.h or your main tab
+extern double PID_OUTPUT;
+extern double SPEEDPID_OUTPUT;
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // -------- ANGLE PID --------
 double integral = 0.0;
-double previous = 0.0;
-double kp = 0.0, ki = 0.0, kd = 0.0;
+double kp = 3.5;    // Start with a safe default instead of 0.0
+double ki = 0.05;   
+double kd = 0.1;    
 double setpoint = 0.0;
-
 
 // -------- SPEED PID --------
 double speedIntegral = 0.0;
 double lastSpeedError = 0.0;
 
-double kp_speed = 0.003;  // start small
-double ki_speed = 0.0;
+double kp_speed = 0.05;   // Adjusted for cascade control scaling
+double ki_speed = 0.001;
 double kd_speed = 0.0;
 
-bool mode = true;
-bool lastAState = false;
-
-unsigned long lastAdjustTimeButtons = 0;
-unsigned long lastAdjustTimeDpad = 0;
-
-const unsigned long buttonDelay = 60; // ms
-const unsigned long dpadDelay = 60;   // ms
-
-
-
+// Track button press states to prevent rapid firing adjustments
+unsigned long lastButtonTime = 0;
 
 //--------------------------------------------------------------------------
 
@@ -68,118 +58,28 @@ void onDisconnectedController(ControllerPtr ctl) {
 }
 
 void processGamepad(ControllerPtr ctl) {
-
   uint16_t buttons = ctl->buttons();
-  uint8_t dpad = ctl->dpad();
 
-  unsigned long now = millis();
-
-
-  // -------- MODE TOGGLE (press A once) --------
-  bool currentAState = (buttons & BUTTON_A);
-
-  if (currentAState && !lastAState) {
-    mode = !mode;
+  // Rate limit button presses to once every 150ms so numbers change controllably
+  if (millis() - lastButtonTime > 150) {
+    // X button -> decrease kp
+    if (ctl->x()) { kp -= 0.1; lastButtonTime = millis(); }
+    // Y button -> increase kp
+    if (ctl->y()) { kp += 0.1; lastButtonTime = millis(); }
+    // Dpad UP -> increase ki
+    if (buttons & 0x0001) { ki += 0.01; lastButtonTime = millis(); }
+    // Dpad LEFT -> decrease ki
+    if (buttons & 0x0008) { ki -= 0.01; lastButtonTime = millis(); }
+    // Dpad RIGHT -> increase kd
+    if (buttons & 0x0004) { kd += 0.01; lastButtonTime = millis(); }
+    // Dpad DOWN -> decrease kd
+    if (buttons & 0x0002) { kd -= 0.01; lastButtonTime = millis(); }
   }
 
-  lastAState = currentAState;
-
-
-  // -------- ANGLE PID MODE --------
-  if (mode == true) {
-
-    if ((buttons & BUTTON_X) && (now - lastAdjustTimeButtons > buttonDelay)) {
-      kp -= 0.1;
-      lastAdjustTimeButtons = now;
-    }
-
-    if ((buttons & BUTTON_Y) && (now - lastAdjustTimeButtons > buttonDelay)) {
-      kp += 0.1;
-      lastAdjustTimeButtons = now;
-    }
-
-    if ((dpad & DPAD_UP) && (now - lastAdjustTimeDpad > dpadDelay)) {
-      ki += 0.01;
-      lastAdjustTimeDpad = now;
-    }
-
-    if ((dpad & DPAD_DOWN) && (now - lastAdjustTimeDpad > dpadDelay)) {
-      kd -= 0.01;
-      lastAdjustTimeDpad = now;
-    }
-
-    if ((dpad & DPAD_RIGHT) && (now - lastAdjustTimeDpad > dpadDelay)) {
-      kd += 0.01;
-      lastAdjustTimeDpad = now;
-    }
-
-    if ((dpad & DPAD_LEFT) && (now - lastAdjustTimeDpad > dpadDelay)) {
-      ki -= 0.01;
-      lastAdjustTimeDpad = now;
-    }
-
-  }
-
-
-  // -------- SPEED PID MODE --------
-  else {
-
-    if ((buttons & BUTTON_X) && (now - lastAdjustTimeButtons > buttonDelay)) {
-      kp_speed -= 0.01;
-      lastAdjustTimeButtons = now;
-    }
-
-    if ((buttons & BUTTON_Y) && (now - lastAdjustTimeButtons > buttonDelay)) {
-      kp_speed += 0.01;
-      lastAdjustTimeButtons = now;
-    }
-
-    if ((dpad & DPAD_UP) && (now - lastAdjustTimeDpad > dpadDelay)) {
-      ki_speed += 0.01;
-      lastAdjustTimeDpad = now;
-    }
-
-    if ((dpad & DPAD_DOWN) && (now - lastAdjustTimeDpad > dpadDelay)) {
-      kd_speed -= 0.01;
-      lastAdjustTimeDpad = now;
-    }
-
-    if ((dpad & DPAD_RIGHT) && (now - lastAdjustTimeDpad > dpadDelay)) {
-      kd_speed += 0.01;
-      lastAdjustTimeDpad = now;
-    }
-
-    if ((dpad & DPAD_LEFT) && (now - lastAdjustTimeDpad > dpadDelay)) {
-      ki_speed -= 0.01;
-      lastAdjustTimeDpad = now;
-    }
-
-  }
-
-
-  // -------- SETPOINT CONTROL --------
-  if (ctl->axisY() <= -25) {
-    setpoint += 2;
-  }
-
-  if (ctl->axisY() >= 25) {
-    setpoint -= 2;
-  }
-
-
-  // -------- SAFETY LIMITS --------
-  kp = constrain(kp, 0, 100);
-  ki = constrain(ki, 0, 50);
-  kd = constrain(kd, 0, 50);
-
-  kp_speed = constrain(kp_speed, 0, 5);
-  ki_speed = constrain(ki_speed, 0, 5);
-  kd_speed = constrain(kd_speed, 0, 5);
-
+  // Left joystick Y -> change setpoint
+  if (ctl->axisY() <= -25) setpoint += 0.1; // Smaller increments for gentler trim tuning
+  if (ctl->axisY() >= 25) setpoint -= 0.1;
 }
-
-
-
 
 void processControllers() {
   for (auto ctl : myControllers) {
@@ -193,12 +93,18 @@ void processControllers() {
 
 // -------------------- PID FUNCTION --------------------
 double PID(double error) {
+  static double previous = 0.0;
   double proportional = error;
+  
   integral += error * dt;
-  // Anti-windup
-  integral = constrain(integral, -100, 100);
-  double derivative = (error - previous) / dt;
+  integral = constrain(integral, -100, 100); // Anti-windup
+  
+  double derivative = 0.0;
+  if (dt > 0.0) { // Protect against divide-by-zero crash
+    derivative = (error - previous) / dt;
+  }
   previous = error;
+  
   return (kp * proportional) + (ki * integral) + (kd * derivative);
 }
 
@@ -208,13 +114,15 @@ double speedPID() {
   float rightSpeed = getRightSpeed(dt);
   float avgSpeed = (leftSpeed + rightSpeed) / 2.0;
 
-  double speedError = 0 - avgSpeed;
+  double speedError = 0.0 - avgSpeed;
 
   speedIntegral += speedError * dt;
+  speedIntegral = constrain(speedIntegral, -50, 50);
 
-  speedIntegral = constrain(speedIntegral, -100, 100);
-
-  double speedDerivative = (speedError - lastSpeedError) / dt;
+  double speedDerivative = 0.0;
+  if (dt > 0.0) {
+    speedDerivative = (speedError - lastSpeedError) / dt;
+  }
 
   lastSpeedError = speedError;
   return (kp_speed * speedError) + (ki_speed * speedIntegral) + (kd_speed * speedDerivative);
@@ -223,19 +131,13 @@ double speedPID() {
 // -------------------- SETUP --------------------
 void setupcontroller() {
   Serial.begin(115200);
-
-  lcd.clear();
-
-  Wire.begin(21, 22);
+  Wire.begin();
 
   // LCD
   lcd.init();
   lcd.backlight();
 
-  kp = 0.0;
-  ki = 0.0;
-  kd = 0.0;
-  last_time = 0;
+  // Removed the lines that reset kp, ki, kd to 0.0 instantly
 
   // Bluepad32
   BP32.setup(&onConnectedController, &onDisconnectedController);
@@ -250,55 +152,36 @@ int controller() {
   BP32.update();
   processControllers();
 
-  // Read angle from IMU (replace this with real filtered value)
   double actual = angle;
 
-  // PID calculation
-  double error = setpoint - actual;
-  PID_OUTPUT = PID(error);
+  // 1. CASCADING APPROACH: Run the Speed PID first to find the angle offset adjustment
   SPEEDPID_OUTPUT = speedPID();
-  double FINALPID_OUTPUT = PID_OUTPUT + SPEEDPID_OUTPUT;
+  
+  // 2. Adjust target angle setpoint dynamically based on wheel velocity
+  double adjustedSetpoint = setpoint + SPEEDPID_OUTPUT;
+
+  // 3. Run Angle Control loop based on the new adjusted setpoint target
+  double error = adjustedSetpoint - actual;
+  PID_OUTPUT = PID(error);
+  
+  double FINALPID_OUTPUT = PID_OUTPUT;
+  
+  // Constrain to physical PWM limits
   FINALPID_OUTPUT = constrain(FINALPID_OUTPUT, -255, 255);
   int pwm = constrain(abs(FINALPID_OUTPUT), 0, 255);
-
 
   // LCD display PID values
   lcd.setCursor(0, 0);
   lcd.print("Kp:");
-  lcd.print(kp, 2);
-  lcd.setCursor(0, 1);
-  lcd.print("Ki:");
-  lcd.print(ki, 3);
-  lcd.print(" Kd:");
-  lcd.print(kd, 3);
-
-  if (mode == true){
-    lcd.setCursor(0, 0);
-    lcd.print("MODE1");
-  }
-  else {
-    lcd.setCursor(0, 0);
-    lcd.print("MODE2");
-  }
+  lcd.print(kp, 1);
+  lcd.print(" SP:");
+  lcd.print(adjustedSetpoint, 1);
   
-//
-  //Serial.print("kp:");
-  //Serial.print(kp);
-  //Serial.print(",");
-  //Serial.print("ki:");
-  //Serial.print(ki);
-  //Serial.print(",");
-  //Serial.print("kd:");
-  //Serial.print(kd);
-  //Serial.print(",");
-  //Serial.print("kp_speed:");
-  //Serial.print(kp_speed);
-  //Serial.print(",");
-  //Serial.print("ki_speed:");
-  //Serial.print(ki_speed);
-  //Serial.print(",");
-  //Serial.print("kd_speed:");
-  //Serial.println(kd_speed);
-//
-  return (pwm);
+  lcd.setCursor(0, 1);
+  lcd.print("P:");
+  lcd.print(pwm);
+  lcd.print(" Ang:");
+  lcd.print(actual, 1);
+
+  return(pwm);
 }

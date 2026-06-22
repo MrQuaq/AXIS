@@ -4,22 +4,25 @@
 #define CH1 0
 #define CH2 1
 
-#define PWMA 16
-#define PWMB 17
-#define A01 18
-#define A02 19
-#define B01 20
-#define B02 22
+#define PWMA 25
+#define AIN1 27
+#define AIN2 26
+
+#define PWMB 18
+#define BIN1 16
+#define BIN2 17
+
+#define STBY 23
 
 void setupmotor() {
 
   pinMode(PWMA, OUTPUT);
   pinMode(PWMB, OUTPUT);
 
-  pinMode(A01, OUTPUT);
-  pinMode(A02, OUTPUT);
-  pinMode(B01, OUTPUT);
-  pinMode(B02, OUTPUT);
+  pinMode(AIN1, OUTPUT);
+  pinMode(AIN2, OUTPUT);
+  pinMode(BIN1, OUTPUT);
+  pinMode(BIN2, OUTPUT);
 
   ledcSetup(CH1, PWM_FREQ, PWM_RES);
   ledcAttachPin(PWMA, CH1);
@@ -34,10 +37,10 @@ void motor(int pwm, double PID_OUTPUT){
 
   if (FINALPID_OUTPUT < -20) {
 
-    digitalWrite(A01, HIGH);
-    digitalWrite(B01, HIGH);
-    digitalWrite(A02, LOW);
-    digitalWrite(B02, LOW);
+    digitalWrite(AIN1, HIGH);
+    digitalWrite(BIN1, HIGH);
+    digitalWrite(AIN2, LOW);
+    digitalWrite(BIN2, LOW);
 
     ledcWrite(CH1, pwm);
     ledcWrite(CH2, pwm);
@@ -45,10 +48,10 @@ void motor(int pwm, double PID_OUTPUT){
 
   else if (FINALPID_OUTPUT > 20) {
 
-    digitalWrite(A01, LOW);
-    digitalWrite(B01, LOW);
-    digitalWrite(A02, HIGH);
-    digitalWrite(B02, HIGH);
+    digitalWrite(AIN1, LOW);
+    digitalWrite(BIN1, LOW);
+    digitalWrite(AIN2, HIGH);
+    digitalWrite(BIN2, HIGH);
 
     ledcWrite(CH1, pwm);
     ledcWrite(CH2, pwm);

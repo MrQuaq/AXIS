@@ -3,6 +3,7 @@
 double dt = 0.0;
 unsigned long last_time;
 
+extern float angle;
 
 double FINALPID_OUTPUT;
 double PID_OUTPUT;
@@ -13,6 +14,8 @@ void setup() {
   setupIMU();
   setupcontroller();
   setupEncoders();
+
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -25,4 +28,8 @@ void loop() {
   updateIMU();
   int pwm = controller();
   motor(pwm, FINALPID_OUTPUT);  
+
+  Serial.print(angle);
+  Serial.print(",");
+  Serial.println(pwm);
 }
