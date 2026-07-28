@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "SilkscreenLogo.preety")(type "KiCad")(uri "${KIPRJMOD}/SilkscreenLogo.preety")(options "")(descr ""))
+)
