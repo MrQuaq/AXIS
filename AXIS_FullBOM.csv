@@ -1,0 +1,42 @@
+Id,Designator,Footprint,Quantity,Designation,Supplier and ref,In possesion
+1,D1,LED_0805_2012Metric,1,Power_LED,,FALSE
+2,J4,PinSocket_1x01_P2.54mm_Vertical,1,LM2596-OUT+,,FALSE
+3,"C5,C6",C_0805_2012Metric,2,100nF,,FALSE
+4,TP2,TestPoint_Pad_D1.5mm,1,TestPoint-GND,,FALSE
+5,J6,PinSocket_1x15_P2.54mm_Vertical,1,ESP-32-LEFT,,FALSE
+6,J14,"TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",1,MotorB,,FALSE
+7,TP4,TestPoint_Pad_D1.5mm,1,TestPoint-ESP-3.3V,,FALSE
+8,J13,"TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",1,MotorA,,FALSE
+9,J15,"TerminalBlock_Phoenix_MKDS-1,5-4_1x04_P5.00mm_Horizontal",1,EncoderB,,FALSE
+10,TP1,TestPoint_Pad_D1.5mm,1,TestPoint-7.2V,,FALSE
+11,C1,CP_Radial_D10.0mm_P5.00mm,1,1000µF,,FALSE
+12,J1,"TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",1,7.2V,,FALSE
+13,D2,D_SMA,1,SS34,,FALSE
+14,J10,PinSocket_1x10_P2.54mm_Vertical,1,ICM0948,,FALSE
+15,C4,CP_Radial_D8.0mm_P3.50mm,1,470µF,,FALSE
+16,J9,PinSocket_1x08_P2.54mm_Vertical,1,TB6612FNG_LEFT,,FALSE
+17,J3,PinSocket_1x01_P2.54mm_Vertical,1,LM2596-IN-,,FALSE
+18,J8,PinSocket_1x15_P2.54mm_Vertical,1,ESP-32-RIGHT,,FALSE
+19,J11,PinSocket_1x08_P2.54mm_Vertical,1,TB6612FNG_RIGHT,,FALSE
+20,J7,PinSocket_1x04_P2.54mm_Vertical,1,LCD-2x16,,FALSE
+21,J5,PinSocket_1x01_P2.54mm_Vertical,1,LM2596-OUT-,,FALSE
+22,J16,JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical,1,Power_Switch,,FALSE
+23,F1,Fuseholder_Blade_Mini_Keystone_3568,1,3A,,FALSE
+24,J2,PinSocket_1x01_P2.54mm_Vertical,1,LM2596-IN+,,FALSE
+25,C2,CP_Radial_D8.0mm_P3.50mm,1,100 µF,,FALSE
+26,TP3,TestPoint_Pad_D1.5mm,1,TestPoint-5V,,FALSE
+27,R1,R_0805_2012Metric,1,1K,,FALSE
+28,J12,"TerminalBlock_Phoenix_MKDS-1,5-4_1x04_P5.00mm_Horizontal",1,EncoderA,,FALSE
+,,,,,,
+Part,Quantity,In possesion,,,,
+ ESP-32 module,1,TRUE,,,,
+TB6612FNG module,1,TRUE,,,,
+LM2596 module,1,TRUE,,,,
+DC motor with encoder,2,TRUE,,,,
+16 char LCD display,1,TRUE,,,,
+"7,2V Ni Mah battery",1,TRUE,,,,
+switch,1,TRUE,,,,
+,,,,,,
+Part,Quantity,In possesion,,,,
+1kg PLA filament,1,FALSE,,,,
+Wheel,2,TRUE,,,,
