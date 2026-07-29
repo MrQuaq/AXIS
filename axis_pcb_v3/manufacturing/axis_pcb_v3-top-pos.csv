@@ -1,0 +1,26 @@
+Designator,Val,Package,Mid X,Mid Y,Rotation,Layer
+"C1","1000µF","CP_Radial_D10.0mm_P5.00mm",214.200000,-122.000000,0.000000,top
+"C2","100 µF","CP_Radial_D8.0mm_P3.50mm",183.600000,-68.700000,0.000000,top
+"C4","470µF","CP_Radial_D8.0mm_P3.50mm",178.500000,-132.000000,90.000000,top
+"C5","100nF","C_0805_2012Metric",174.000000,-67.750000,-90.000000,top
+"C6","100nF","C_0805_2012Metric",167.100000,-135.900000,0.000000,top
+"D1","Power_LED","LED_0805_2012Metric",215.105177,-133.487500,180.000000,top
+"D2","SS34","D_SMA",215.867677,-80.000000,90.000000,top
+"F1","3A","Fuseholder_Blade_Mini_Keystone_3568",217.567677,-88.040000,-90.000000,top
+"J1","7.2V","TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",215.867677,-67.500000,180.000000,top
+"J2","LM2596-IN+","PinSocket_1x01_P2.54mm_Vertical",183.652651,-119.500000,90.000000,top
+"J3","LM2596-IN-","PinSocket_1x01_P2.54mm_Vertical",200.952651,-119.500000,90.000000,top
+"J4","LM2596-OUT+","PinSocket_1x01_P2.54mm_Vertical",183.652651,-79.500000,90.000000,top
+"J5","LM2596-OUT-","PinSocket_1x01_P2.54mm_Vertical",200.952651,-79.500000,90.000000,top
+"J6","ESP-32-LEFT","PinSocket_1x15_P2.54mm_Vertical",169.500000,-104.320000,180.000000,top
+"J7","LCD-2x16","PinSocket_1x04_P2.54mm_Vertical",125.500000,-71.820000,180.000000,top
+"J8","ESP-32-RIGHT","PinSocket_1x15_P2.54mm_Vertical",144.100000,-104.260000,180.000000,top
+"J9","TB6612FNG_LEFT","PinSocket_1x08_P2.54mm_Vertical",168.040000,-117.260000,-90.000000,top
+"J10","ICM0948","PinSocket_1x10_P2.54mm_Vertical",125.500000,-104.400000,180.000000,top
+"J11","TB6612FNG_RIGHT","PinSocket_1x08_P2.54mm_Vertical",168.080000,-132.500000,-90.000000,top
+"J12","EncoderA","TerminalBlock_Phoenix_MKDS-1,5-4_1x04_P5.00mm_Horizontal",99.500000,-129.000000,0.000000,top
+"J13","MotorA","TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",168.000000,-148.500000,90.000000,top
+"J14","MotorB","TerminalBlock_Phoenix_MKDS-1,5-2_1x02_P5.00mm_Horizontal",145.500000,-143.500000,-90.000000,top
+"J15","EncoderB","TerminalBlock_Phoenix_MKDS-1,5-4_1x04_P5.00mm_Horizontal",121.500000,-129.000000,0.000000,top
+"J16","Power_Switch","JST_XH_B2B-XH-A_1x02_P2.50mm_Vertical",214.200000,-108.500000,90.000000,top
+"R1","1K","R_0805_2012Metric",214.167677,-129.487500,-90.000000,top
