@@ -1,0 +1,12 @@
+Impero is a computervision app that uses your webcam to track your hand.
+It uses opencv for computervision and customtkinter for the interface.
+
+It has 2 modes:
+- mouse mode, it acts as a mouse (move index finger, click by touching middle and index finger, zoom with index and thumb, volume controll with full hand)
+- iot mode, this will make the possibility to assign certain actions of a robot to hand gestures
+
+File structure:
+- main.py = starts app
+- tracking.py = tracks hand movements
+- actions.py = uses tracking data for actions
+- gui.py = interface using CustomTkinter
